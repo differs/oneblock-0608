@@ -84,12 +84,30 @@ fn revoke_claimfailed_when_claim_already_remove() {
 	})
 }
 
-// #[test]
+#[test]
 
-// fn transfer_claim_works() {
-// 	new_test_ext().execute_with(|| {
-// 		let claim: Vec<u8> = vec![0,1];
-// 		let reciver: T::AccountId = String::from("0x0");;
-// 		assert_ok!(PoeModule::transfer_claim(Origin::signed(1), claim.clone(),reciver.clone()));
-// 	})
-// }
+fn transfer_claim_works() {
+	new_test_ext().execute_with(|| {
+		let claim: Vec<u8> = vec![0,1];
+		// let reciver = String::from("0x0");
+		let reciver: u64 = 1111;
+		let _ = (PoeModule::create_claim(Origin::signed(1), claim.clone()));
+		assert_ok!(PoeModule::transfer_claim(Origin::signed(1), claim.clone(), reciver.clone()));
+		
+	})
+}
+
+#[test]
+
+fn transfer_claim_failed_when_NoSuchProof() {
+	new_test_ext().execute_with(|| {
+		let claim: Vec<u8> = vec![0,1];
+		// let reciver = String::from("0x0");
+		let reciver: u64 = 1111;
+		// let _ = (PoeModule::create_claim(Origin::signed(1), claim.clone()));
+		// assert_ok!(PoeModule::transfer_claim(Origin::signed(1), claim.clone(), reciver.clone()));
+		assert_noop!(PoeModule::transfer_claim(Origin::signed(1),claim.clone(), reciver.clone()),
+		Error::<Test>::NoSuchProof
+		);
+	})
+}
