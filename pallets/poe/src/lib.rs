@@ -4,6 +4,12 @@
 
 pub use pallet::*;
 
+#[cfg(test)]
+mod mock;
+
+#[cfg(test)]
+mod tests;
+
 #[frame_support::pallet]
 pub mod pallet {
 	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
@@ -99,7 +105,7 @@ pub mod pallet {
 		}
 
 		#[pallet::weight(10_000)]
-		fn revoke_claim(
+		pub(super) fn revoke_claim(
 			origin: OriginFor<T>,
 			proof: Vec<u8>,
 		) -> DispatchResultWithPostInfo {
@@ -126,7 +132,7 @@ pub mod pallet {
 			Ok(().into())
 		}
 		#[pallet::weight(10_000)]
-		fn transfer_claim(
+		pub(super) fn transfer_claim(
 			origin: OriginFor<T>, 
 			proof: Vec<u8>,
 			reciver: T::AccountId,
@@ -136,7 +142,7 @@ pub mod pallet {
 			// Verify that the specified proof has been claimed.
 			ensure!(Proofs::<T>::contains_key(&proof), Error::<T>::NoSuchProof);
 
-			let (owner, _) = Proofs::<T>::get(&proof);
+			let (_owner, _) = Proofs::<T>::get(&proof);
 			// transfer claim
 			// Proofs::<T>::transfer(&proof);
 
