@@ -111,3 +111,17 @@ fn transfer_claim_failed_when_NoSuchProof() {
 		);
 	})
 }
+
+
+#[test]
+/// 创建存征超过长度限制
+fn crate_clain_when_proof_is_too_long(){
+	new_test_ext().execute_with(|| {
+		let proof: Vec<u8> = vec![0,1,2];
+		// let proof: Vec<u8> = vec![1];
+		assert_noop!(
+			PoeModule::create_claim(Origin::signed(1), proof.clone()),
+			Error::<Test>::ProofTooLong
+		);
+	});
+}

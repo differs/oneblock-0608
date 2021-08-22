@@ -14,14 +14,7 @@ mod tests;
 pub mod pallet {
 	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
     use frame_system::pallet_prelude::*;
-    use sp_std::vec::Vec; // Step 3.1 will include this in `Cargo.toml`
-
-	// #[pallet::config]  // <-- Step 2. code block will replace this.
- 
-	// #[pallet::event]   // <-- Step 3. code block will replace this.
-    
-	// #[pallet::error]   // <-- Step 4. code block will replace this.
-
+    use sp_std::vec::Vec; 
 	#[pallet::pallet]
 
 	#[pallet::generate_store(pub(super) trait Store)]
@@ -41,6 +34,7 @@ pub mod pallet {
     pub trait Config: frame_system::Config {
 	        /// Because this pallet emits events, it depends on the runtime's definition of an event.
 			type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+			type MaxProofLength: Get<usize>;
 
 	}
 
@@ -67,6 +61,8 @@ pub mod pallet {
             NoSuchProof,
             /// The proof is claimed by another account, so caller can't revoke it.
             NotProofOwner,
+			/// too long
+			ProofTooLong,
 	}
 	
 	#[pallet::storage] 
@@ -91,6 +87,9 @@ pub mod pallet {
 		
 			// Verify that the specified proof has not already been claimed.         
 			ensure!(!Proofs::<T>::contains_key(&proof), Error::<T>::ProofAlreadyClaimed);
+
+			// 长度检查
+			ensure!(proof.len().le(&(T::MaxProofLength::get())), Error::<T>::ProofTooLong);
 
 			// Get the block number from the FRAME System module.
 			let current_block = <frame_system::Module<T>>::block_number();

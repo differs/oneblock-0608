@@ -1,4 +1,5 @@
 use crate as pallet_poe;
+// use pallet_poe;
 use sp_core::H256;
 use frame_support::parameter_types;
 use sp_runtime::{
@@ -51,8 +52,13 @@ impl system::Config for Test {
 	type SS58Prefix = SS58Prefix;
 }
 
+parameter_types! {
+	pub const MaxProofLength: usize = 2;
+}
+
 impl pallet_poe::Config for Test {
 	type Event = Event;
+	type MaxProofLength = MaxProofLength;
 }
 
 // Build genesis storage according to the mock runtime.

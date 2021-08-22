@@ -265,9 +265,15 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
+parameter_types! {
+
+	pub const MaxProofLength: usize = 2_000;
+}
+
 /// Configure the pallet-template in pallets/template.
 impl pallet_poe::Config for Runtime {
 	type Event = Event;
+	type MaxProofLength = MaxProofLength; // 自定义类型。
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
